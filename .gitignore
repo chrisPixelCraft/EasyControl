@@ -6,3 +6,5 @@ chinese-calligraphy-dataset/*
 bezier_curves_output/*
 bezier_curves_output_no_visualization/*
 __pycache__/*
+
+/chinese-calligraphy-dataset/
