@@ -65,19 +65,19 @@ def resize_position_encoding(batch_size, original_height, original_width, target
     latent_image_ids = latent_image_ids.reshape(
         latent_image_id_height * latent_image_id_width, latent_image_id_channels
     )
-    
+
     scale_h = original_height / target_height
     scale_w = original_width / target_width
     latent_image_ids_resized = torch.zeros(target_height//2, target_width//2, 3, device=device, dtype=dtype)
     latent_image_ids_resized[..., 1] = latent_image_ids_resized[..., 1] + torch.arange(target_height//2, device=device)[:, None] * scale_h
     latent_image_ids_resized[..., 2] = latent_image_ids_resized[..., 2] + torch.arange(target_width//2, device=device)[None, :] * scale_w
-    
+
     cond_latent_image_id_height, cond_latent_image_id_width, cond_latent_image_id_channels = latent_image_ids_resized.shape
     cond_latent_image_ids = latent_image_ids_resized.reshape(
             cond_latent_image_id_height * cond_latent_image_id_width, cond_latent_image_id_channels
         )
-    return latent_image_ids, cond_latent_image_ids 
-    
+    return latent_image_ids, cond_latent_image_ids
+
 # Copied from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion_img2img.retrieve_latents
 def retrieve_latents(
         encoder_output: torch.Tensor, generator: Optional[torch.Generator] = None, sample_mode: str = "sample"
@@ -439,11 +439,11 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
     ):
         height_cond = 2 * (self.cond_size // self.vae_scale_factor)
         width_cond = 2 * (self.cond_size // self.vae_scale_factor)
-        height = 2 * (int(height) // self.vae_scale_factor)  
+        height = 2 * (int(height) // self.vae_scale_factor)
         width = 2 * (int(width) // self.vae_scale_factor)
 
         shape = (batch_size, num_channels_latents, height, width)  # 1 16 106 80
-        noise_latents = randn_tensor(shape, generator=generator, device=device, dtype=dtype)  
+        noise_latents = randn_tensor(shape, generator=generator, device=device, dtype=dtype)
         noise_latents = self._pack_latents(noise_latents, batch_size, num_channels_latents, height, width)
         noise_latent_image_ids, cond_latent_image_ids = resize_position_encoding(
                 batch_size,
@@ -454,13 +454,13 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
                 device,
                 dtype,
             )
-        
+
         latents_to_concat = []
         latents_ids_to_concat = [noise_latent_image_ids]
-        
+
         # subject
         if subject_image is not None:
-            shape_subject = (batch_size, num_channels_latents, height_cond*sub_number, width_cond)  
+            shape_subject = (batch_size, num_channels_latents, height_cond*sub_number, width_cond)
             subject_image = subject_image.to(device=device, dtype=dtype)
             subject_image_latents = self._encode_vae_image(image=subject_image, generator=generator)
             subject_latents = self._pack_latents(subject_image_latents, batch_size, num_channels_latents, height_cond*sub_number, width_cond)
@@ -471,15 +471,15 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
             subject_latent_image_ids = torch.concat([latent_subject_ids for _ in range(sub_number)], dim=-2)
             latents_to_concat.append(subject_latents)
             latents_ids_to_concat.append(subject_latent_image_ids)
-            
+
         # spatial
         if condition_image is not None:
-            shape_cond = (batch_size, num_channels_latents, height_cond*cond_number, width_cond)  
+            shape_cond = (batch_size, num_channels_latents, height_cond*cond_number, width_cond)
             condition_image = condition_image.to(device=device, dtype=dtype)
             image_latents = self._encode_vae_image(image=condition_image, generator=generator)
             cond_latents = self._pack_latents(image_latents, batch_size, num_channels_latents, height_cond*cond_number, width_cond)
             mask3 = torch.zeros(shape_cond, device=device, dtype=dtype)
-            mask3 = self._pack_latents(mask3, batch_size, num_channels_latents, height_cond*cond_number, width_cond) 
+            mask3 = self._pack_latents(mask3, batch_size, num_channels_latents, height_cond*cond_number, width_cond)
             cond_latent_image_ids = cond_latent_image_ids
             cond_latent_image_ids = torch.concat([cond_latent_image_ids for _ in range(cond_number)], dim=-2)
             latents_ids_to_concat.append(cond_latent_image_ids)
@@ -534,7 +534,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
         height = height or self.default_sample_size * self.vae_scale_factor
         width = width or self.default_sample_size * self.vae_scale_factor
         self.cond_size = cond_size
-        
+
         # 1. Check inputs. Raise error if not correct
         self.check_inputs(
             prompt,
@@ -550,10 +550,10 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
         self._guidance_scale = guidance_scale
         self._joint_attention_kwargs = joint_attention_kwargs
         self._interrupt = False
-        
+
         cond_number = len(spatial_images)
         sub_number = len(subject_images)
-        
+
         if sub_number > 0:
             subject_image_ls = []
             for subject_image in subject_images:
@@ -573,7 +573,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
             subject_image = torch.concat(subject_image_ls, dim=-2)
         else:
             subject_image = None
-        
+
         if cond_number > 0:
             condition_image_ls = []
             for img in spatial_images:
@@ -584,7 +584,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
             condition_image = torch.concat(condition_image_ls, dim=-2)
         else:
             condition_image = None
-        
+
         # 2. Define call parameters
         if prompt is not None and isinstance(prompt, str):
             batch_size = 1
@@ -669,7 +669,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
         t = torch.tensor([timesteps[0]], device=device)
         timestep = t.expand(warmup_latents.shape[0]).to(latents.dtype)
         _ = self.transformer(
-                    hidden_states=warmup_latents,  
+                    hidden_states=warmup_latents,
                     cond_hidden_states=cond_latents,
                     timestep=timestep/ 1000,
                     guidance=guidance,
@@ -690,7 +690,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
                 # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
                 timestep = t.expand(latents.shape[0]).to(latents.dtype)
                 noise_pred = self.transformer(
-                    hidden_states=latents,  
+                    hidden_states=latents,
                     cond_hidden_states=cond_latents,
                     timestep=timestep / 1000,
                     guidance=guidance,
