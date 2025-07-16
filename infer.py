@@ -11,16 +11,29 @@ def clear_cache(transformer):
     for name, attn_processor in transformer.attn_processors.items():
         attn_processor.bank_kv.clear()
 
-# Initialize model
+# Clear GPU cache before loading models
+torch.cuda.empty_cache()
+
+# Initialize model with memory optimizations
 device = "cuda"
 base_path = "black-forest-labs/FLUX.1-dev"  # Path to your base model
-pipe = FluxPipeline.from_pretrained(base_path, torch_dtype=torch.bfloat16, device=device)
-transformer = FluxTransformer2DModel.from_pretrained(
-    base_path, 
-    subfolder="transformer",
-    torch_dtype=torch.bfloat16, 
-    device=device
+
+# Load pipeline without immediately moving to GPU
+pipe = FluxPipeline.from_pretrained(
+    base_path,
+    torch_dtype=torch.bfloat16,
+    device_map=None  # Don't auto-move to GPU
 )
+
+# Load transformer separately with memory optimization
+transformer = FluxTransformer2DModel.from_pretrained(
+    base_path,
+    subfolder="transformer",
+    torch_dtype=torch.bfloat16,
+    device_map=None  # Don't auto-move to GPU
+)
+
+# Replace transformer and move to GPU in one step
 pipe.transformer = transformer
 pipe.to(device)
 

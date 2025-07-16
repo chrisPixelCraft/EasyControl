@@ -1,0 +1,113 @@
+{
+  "tasks": [
+    {
+      "id": "7fa81755-f201-4522-8288-8988dfaa85ae",
+      "name": "Download Complete FLUX.1-dev Model",
+      "description": "Download the complete FLUX.1-dev model from Hugging Face Hub to replace the incomplete local model directory. The current FLUX.1-dev directory is missing critical components (tokenizer/, tokenizer_2/, text_encoder_2/, etc.) that are required by the training script.",
+      "notes": "The model is approximately 50GB in size. Ensure sufficient disk space is available. The --resume-download flag allows interrupted downloads to continue from where they left off.",
+      "status": "in_progress",
+      "dependencies": [],
+      "createdAt": "2025-07-15T05:44:42.720Z",
+      "updatedAt": "2025-07-15T05:47:43.037Z",
+      "relatedFiles": [
+        {
+          "path": "FLUX.1-dev/",
+          "type": "TO_MODIFY",
+          "description": "Target directory for the complete model download",
+          "lineStart": 1,
+          "lineEnd": 1
+        },
+        {
+          "path": "requirements.txt",
+          "type": "REFERENCE",
+          "description": "Contains dependencies including transformers and diffusers",
+          "lineStart": 1,
+          "lineEnd": 20
+        }
+      ],
+      "implementationGuide": "Use huggingface-cli download command to download the complete model:\\n\\n1. First check if huggingface-cli is installed:\\n   pip install huggingface_hub\\n\\n2. Login to Hugging Face if authentication is required:\\n   huggingface-cli login\\n\\n3. Download the complete model with resume capability:\\n   huggingface-cli download --resume-download black-forest-labs/FLUX.1-dev --local-dir FLUX.1-dev --local-dir-use-symlinks False\\n\\n4. If direct access fails, use hf-mirror as fallback:\\n   export HF_ENDPOINT=https://hf-mirror.com\\n   huggingface-cli download --resume-download black-forest-labs/FLUX.1-dev --local-dir FLUX.1-dev --local-dir-use-symlinks False\\n\\nThe download will create the complete directory structure with all required components.",
+      "verificationCriteria": "Verify that the FLUX.1-dev directory contains all required subdirectories: tokenizer/, tokenizer_2/, text_encoder/, text_encoder_2/, scheduler/, transformer/, vae/, and other necessary components. Check that the directory structure matches the expected Hugging Face model format.",
+      "analysisResult": "Fix FLUX.1-dev model tokenizer loading error during EasyControl training by downloading the complete model with all required components including tokenizer/, tokenizer_2/, text_encoder_2/, and other missing subdirectories. The solution leverages existing project patterns and requires no code changes to the training script."
+    },
+    {
+      "id": "6781080b-3e80-4762-8cfd-843eac3fdddb",
+      "name": "Verify Model Integrity and Structure",
+      "description": "Verify that the downloaded FLUX.1-dev model has all required components and directory structure needed by the training script. Ensure the tokenizer files are properly accessible.",
+      "notes": "This verification step is crucial to ensure the training script will be able to load all required components. Any missing files or subdirectories will cause the same tokenizer loading error.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7fa81755-f201-4522-8288-8988dfaa85ae"
+        }
+      ],
+      "createdAt": "2025-07-15T05:44:42.720Z",
+      "updatedAt": "2025-07-15T05:44:42.720Z",
+      "relatedFiles": [
+        {
+          "path": "FLUX.1-dev/tokenizer/",
+          "type": "DEPENDENCY",
+          "description": "CLIP tokenizer directory that must exist",
+          "lineStart": 1,
+          "lineEnd": 1
+        },
+        {
+          "path": "FLUX.1-dev/tokenizer_2/",
+          "type": "DEPENDENCY",
+          "description": "T5 tokenizer directory that must exist",
+          "lineStart": 1,
+          "lineEnd": 1
+        },
+        {
+          "path": "train/train.py",
+          "type": "REFERENCE",
+          "description": "Training script that loads the tokenizers",
+          "lineStart": 533,
+          "lineEnd": 541
+        }
+      ],
+      "implementationGuide": "Perform comprehensive verification of the downloaded model:\\n\\n1. Check directory structure:\\n   ls -la FLUX.1-dev/\\n   Expected subdirectories: tokenizer/, tokenizer_2/, text_encoder/, text_encoder_2/, scheduler/, transformer/, vae/\\n\\n2. Verify tokenizer files exist:\\n   ls -la FLUX.1-dev/tokenizer/\\n   ls -la FLUX.1-dev/tokenizer_2/\\n\\n3. Test tokenizer loading independently:\\n   python -c \\\"from transformers import CLIPTokenizer, T5TokenizerFast; tokenizer1 = CLIPTokenizer.from_pretrained('FLUX.1-dev', subfolder='tokenizer'); tokenizer2 = T5TokenizerFast.from_pretrained('FLUX.1-dev', subfolder='tokenizer_2'); print('Tokenizers loaded successfully')\\\"\\n\\n4. Verify model config files exist:\\n   ls -la FLUX.1-dev/*/config.json\\n\\n5. Check total size and file count to ensure complete download",
+      "verificationCriteria": "Successfully load both CLIPTokenizer and T5TokenizerFast using the same from_pretrained calls that are used in the training script. Verify that all required subdirectories exist and contain the necessary configuration and model files.",
+      "analysisResult": "Fix FLUX.1-dev model tokenizer loading error during EasyControl training by downloading the complete model with all required components including tokenizer/, tokenizer_2/, text_encoder_2/, and other missing subdirectories. The solution leverages existing project patterns and requires no code changes to the training script."
+    },
+    {
+      "id": "624b8c3e-4a1b-4cd1-8a12-54a593e8e8a7",
+      "name": "Test Training Script Execution",
+      "description": "Test that the training script can now successfully load the tokenizers and begin training without the previous OSError. Verify that the model loading phase completes without errors.",
+      "notes": "This test ensures that the fix is complete and the training can proceed. The test should be run in the same environment and configuration as the actual training to catch any remaining issues.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "6781080b-3e80-4762-8cfd-843eac3fdddb"
+        }
+      ],
+      "createdAt": "2025-07-15T05:44:42.720Z",
+      "updatedAt": "2025-07-15T05:44:42.720Z",
+      "relatedFiles": [
+        {
+          "path": "train/train_style.sh",
+          "type": "REFERENCE",
+          "description": "Training script that was failing due to tokenizer loading",
+          "lineStart": 1,
+          "lineEnd": 33
+        },
+        {
+          "path": "train/train.py",
+          "type": "REFERENCE",
+          "description": "Main training script with tokenizer loading logic",
+          "lineStart": 533,
+          "lineEnd": 541
+        },
+        {
+          "path": "train/default_config.yaml",
+          "type": "REFERENCE",
+          "description": "Distributed training configuration",
+          "lineStart": 1,
+          "lineEnd": 17
+        }
+      ],
+      "implementationGuide": "Run the training script to verify the tokenizer loading issue is resolved:\\n\\n1. Navigate to the train directory:\\n   cd train\\n\\n2. Run a quick test of the training script initialization:\\n   python -c \\\"import sys; sys.path.append('..'); from train import *; import argparse; parser = argparse.ArgumentParser(); parser.add_argument('--pretrained_model_name_or_path', default='black-forest-labs/FLUX.1-dev'); args = parser.parse_args([]); from transformers import CLIPTokenizer, T5TokenizerFast; tokenizer_one = CLIPTokenizer.from_pretrained(args.pretrained_model_name_or_path, subfolder='tokenizer'); tokenizer_two = T5TokenizerFast.from_pretrained(args.pretrained_model_name_or_path, subfolder='tokenizer_2'); print('Training script tokenizer loading successful')\\\"\\n\\n3. Optionally run the full training script with a dry-run or very short training:\\n   bash train_style.sh (but interrupt after successful initialization)\\n\\n4. Monitor the output for any remaining errors or warnings\\n\\n5. Verify that the distributed training setup works correctly with the new model",
+      "verificationCriteria": "The training script should successfully load both CLIPTokenizer and T5TokenizerFast without OSError. The script should proceed past the tokenizer loading phase and begin model initialization. No tokenizer-related errors should appear in the distributed training logs.",
+      "analysisResult": "Fix FLUX.1-dev model tokenizer loading error during EasyControl training by downloading the complete model with all required components including tokenizer/, tokenizer_2/, text_encoder_2/, and other missing subdirectories. The solution leverages existing project patterns and requires no code changes to the training script."
+    }
+  ]
+}
