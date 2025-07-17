@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import Dict, List, Optional, Tuple, Union, Any
-from .spatial_attention_fuser import SpatialAttentionFuser, SpatialAttentionProcessor
-from .transformer_flux import FluxTransformerBlock, FluxSingleTransformerBlock, FluxTransformer2DModel
+from ..bezier.spatial_attention_fuser import SpatialAttentionFuser, SpatialAttentionProcessor
+from ..core.transformer_flux import FluxTransformerBlock, FluxSingleTransformerBlock, FluxTransformer2DModel
 from diffusers.models.attention_processor import FluxAttnProcessor2_0
 import copy
 

@@ -4,6 +4,11 @@ export CONFIG="./default_config.yaml"
 export TRAIN_DATA="./examples/style.jsonl"  # your data jsonl file
 export LOG_PATH="$OUTPUT_DIR/log"
 
+# Fix for cuDNN Frontend error with CLIP model
+export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
+export TORCH_CUDNN_SDPA_ENABLED=0
+export PYTORCH_DISABLE_CUDNN_SDPA=1
+
 CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --config_file $CONFIG train.py \
     --pretrained_model_name_or_path $MODEL_DIR \
     --cond_size=512 \
@@ -29,4 +34,4 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --config_file $CONFIG train.py \
     --test_h 1024 \
     --test_w 1024 \
     --num_validation_images=2
-# 
+#

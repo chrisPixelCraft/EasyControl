@@ -8,5 +8,8 @@ bezier_curves_output_no_visualization/*
 __pycache__/*
 __MACOSX/*
 
-/chinese-calligraphy-dataset/
-/Flux.1-dev/
+chinese-calligraphy-dataset/*
+Flux.1-dev/*
+
+
+

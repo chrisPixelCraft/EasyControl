@@ -2,7 +2,7 @@ from diffusers.models.attention_processor import FluxAttnProcessor2_0
 from safetensors import safe_open
 import re
 import torch
-from layers_cache import MultiDoubleStreamBlockLoraProcessor, MultiSingleStreamBlockLoraProcessor
+from .layers_cache import MultiDoubleStreamBlockLoraProcessor, MultiSingleStreamBlockLoraProcessor
 
 device = "cuda"
 

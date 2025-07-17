@@ -245,7 +245,7 @@ class BezierParameterProcessor(nn.Module):
             # Modify features for scale
             scaled_features = features * scale
             density = self.compute_adaptive_kde_density(points, scaled_features)
-            density_maps.append(density.unsqueeze(0))  # Add channel dimension
+            density_maps.append(density)  # density is already [H, W]
 
         # Stack scales
         multiscale_density = torch.stack(density_maps, dim=0)  # [3, H, W]
@@ -266,16 +266,33 @@ class BezierParameterProcessor(nn.Module):
             Character density map [1, H, W]
         """
         bezier_curves = character_data['bezier_curves']
+        
+        # Validate bezier_curves format
+        if not isinstance(bezier_curves, list):
+            raise ValueError(f"bezier_curves must be a list, got {type(bezier_curves)}")
 
         if not bezier_curves:
             # Return empty density map
             return torch.zeros(1, *self.output_size, device=self.device)
+        
+        # Validate each curve has 4 control points
+        for curve_idx, curve in enumerate(bezier_curves):
+            if not isinstance(curve, list):
+                raise ValueError(f"Curve {curve_idx} must be a list, got {type(curve)}")
+            if len(curve) != 4:
+                raise ValueError(f"Curve {curve_idx} must have exactly 4 control points, got {len(curve)}")
+            for point_idx, point in enumerate(curve):
+                if not isinstance(point, (list, tuple)) or len(point) != 2:
+                    raise ValueError(f"Curve {curve_idx}, point {point_idx} must be [x, y] format")
+        
+        # Normalize coordinates based on bounding box if available
+        normalized_curves = self._normalize_bezier_coordinates(bezier_curves, character_data)
 
         all_curve_points = []
         all_curve_features = []
 
         # Process each Bézier curve
-        for curve_idx, control_points in enumerate(bezier_curves):
+        for curve_idx, control_points in enumerate(normalized_curves):
             # Convert to tensor
             control_tensor = torch.tensor(control_points, dtype=torch.float32, device=self.device)
 
@@ -319,18 +336,52 @@ class BezierParameterProcessor(nn.Module):
 
         Returns:
             Density maps of shape [B, 1, H, W]
+            
+        Note:
+            For inference, the model should be in eval mode (call .eval()) to avoid
+            BatchNorm issues with small batch sizes. The create_bezier_processor()
+            function automatically sets eval mode.
         """
+        # Warn if in training mode with small batches (potential BatchNorm issues)
+        if self.training:
+            if isinstance(bezier_data, dict):
+                batch_size = 1
+            else:
+                batch_size = len(bezier_data)
+            if batch_size == 1:
+                import warnings
+                warnings.warn(
+                    "BezierParameterProcessor is in training mode with batch size 1. "
+                    "This may cause BatchNorm errors. Consider calling .eval() for inference.",
+                    UserWarning
+                )
         if isinstance(bezier_data, dict):
             bezier_data = [bezier_data]
 
         batch_size = len(bezier_data)
         density_maps = []
 
-        for sample in bezier_data:
+        for sample_idx, sample in enumerate(bezier_data):
+            # Validate sample format
+            if not isinstance(sample, dict):
+                raise ValueError(f"Sample {sample_idx} must be a dictionary, got {type(sample)}")
+            
+            if 'characters' not in sample:
+                raise ValueError(f"Sample {sample_idx} missing required 'characters' field")
+            
+            if not isinstance(sample['characters'], list):
+                raise ValueError(f"Sample {sample_idx} 'characters' must be a list, got {type(sample['characters'])}")
+            
             # Process each character in the sample
             character_densities = []
 
-            for char_data in sample['characters']:
+            for char_idx, char_data in enumerate(sample['characters']):
+                if not isinstance(char_data, dict):
+                    raise ValueError(f"Sample {sample_idx}, character {char_idx} must be a dictionary")
+                
+                if 'bezier_curves' not in char_data:
+                    raise ValueError(f"Sample {sample_idx}, character {char_idx} missing 'bezier_curves' field")
+                
                 char_density = self.process_character_curves(char_data)  # [1, H, W]
                 character_densities.append(char_density)
 
@@ -373,6 +424,80 @@ class BezierParameterProcessor(nn.Module):
                 density_maps[i] = torch.zeros_like(density_map)
 
         return density_maps
+
+    def _normalize_bezier_coordinates(self, bezier_curves: List[List[List[float]]], 
+                                    character_data: Dict[str, Any]) -> List[List[List[float]]]:
+        """
+        Normalize Bézier curve coordinates to fit output size while preserving aspect ratio.
+        
+        Args:
+            bezier_curves: List of Bézier curves, each with 4 control points
+            character_data: Character data containing bounding box info
+            
+        Returns:
+            Normalized Bézier curves with coordinates scaled to output size
+        """
+        if not bezier_curves:
+            return bezier_curves
+            
+        # Handle different bounding box formats (list or tuple)
+        bounding_box = character_data.get('bounding_box')
+        if bounding_box is not None:
+            # Convert to list format if it's a tuple
+            if isinstance(bounding_box, tuple):
+                bounding_box = list(bounding_box)
+            
+            # Extract bounding box parameters
+            x_min, y_min, width, height = bounding_box
+            x_max = x_min + width
+            y_max = y_min + height
+        else:
+            # If no bounding box, compute from all control points
+            all_points = []
+            for curve in bezier_curves:
+                all_points.extend(curve)
+            
+            if not all_points:
+                return bezier_curves
+                
+            x_coords = [p[0] for p in all_points]
+            y_coords = [p[1] for p in all_points]
+            x_min, x_max = min(x_coords), max(x_coords)
+            y_min, y_max = min(y_coords), max(y_coords)
+        
+        # Calculate scaling to fit output size while preserving aspect ratio
+        src_width = x_max - x_min
+        src_height = y_max - y_min
+        
+        if src_width == 0 or src_height == 0:
+            return bezier_curves
+            
+        # Scale to fit output size (64x64 by default) with padding
+        output_width, output_height = self.output_size[1], self.output_size[0]
+        scale_x = (output_width - 4) / src_width  # Leave small margin
+        scale_y = (output_height - 4) / src_height
+        
+        # Use uniform scaling to preserve aspect ratio
+        scale = min(scale_x, scale_y)
+        
+        # Center the scaled coordinates
+        scaled_width = src_width * scale
+        scaled_height = src_height * scale
+        offset_x = (output_width - scaled_width) / 2
+        offset_y = (output_height - scaled_height) / 2
+        
+        # Normalize all curves
+        normalized_curves = []
+        for curve in bezier_curves:
+            normalized_curve = []
+            for point in curve:
+                # Apply scaling and centering
+                new_x = (point[0] - x_min) * scale + offset_x
+                new_y = (point[1] - y_min) * scale + offset_y
+                normalized_curve.append([new_x, new_y])
+            normalized_curves.append(normalized_curve)
+            
+        return normalized_curves
 
     def load_bezier_data(self, json_path: str) -> Dict[str, Any]:
         """
@@ -448,6 +573,9 @@ def create_bezier_processor(device: str = 'cuda') -> BezierParameterProcessor:
         device=device
     )
 
+    # Set to evaluation mode for inference (avoids BatchNorm training mode issues)
+    processor.eval()
+    
     return processor.to(device)
 
 

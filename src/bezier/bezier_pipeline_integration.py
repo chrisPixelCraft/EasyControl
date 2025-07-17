@@ -14,8 +14,8 @@ from typing import Dict, List, Any, Optional, Tuple, Union, Callable
 import json
 import os
 
-from bezier_parameter_processor import BezierParameterProcessor, create_bezier_processor
-from pipeline import FluxPipeline
+from .bezier_parameter_processor import BezierParameterProcessor, create_bezier_processor
+from ..core.pipeline import FluxPipeline
 
 class BezierConditionEncoder(nn.Module):
     """

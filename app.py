@@ -2,15 +2,29 @@ import spaces
 import os
 import json
 import time
+
+# Fix for cuDNN Frontend error with CLIP model
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+os.environ["TORCH_CUDNN_SDPA_ENABLED"] = "0"
+os.environ["PYTORCH_DISABLE_CUDNN_SDPA"] = "1"
+
 import torch
 from PIL import Image
 from tqdm import tqdm
 import gradio as gr
 
 from safetensors.torch import save_file
-from src.pipeline import FluxPipeline
-from src.transformer_flux import FluxTransformer2DModel
-from src.lora_helper import set_single_lora, set_multi_lora, unset_lora
+from src.core.pipeline import FluxPipeline
+from src.core.transformer_flux import FluxTransformer2DModel
+from src.core.lora_helper import set_single_lora, set_multi_lora, unset_lora
+
+# Optional: Apply attention fallback patch for additional safety
+try:
+    from src.attention_fix import patch_transformers_clip_attention
+    patch_transformers_clip_attention()
+    print("Applied CLIP attention fallback patch")
+except ImportError:
+    print("Attention fallback patch not available, relying on environment variables")
 
 class ImageProcessor:
     def __init__(self, path):
@@ -19,11 +33,11 @@ class ImageProcessor:
         transformer = FluxTransformer2DModel.from_pretrained(path, subfolder="transformer", torch_dtype=torch.bfloat16, device=device)
         self.pipe.transformer = transformer
         self.pipe.to(device)
-        
+
     def clear_cache(self, transformer):
         for name, attn_processor in transformer.attn_processors.items():
             attn_processor.bank_kv.clear()
-            
+
     @spaces.GPU()
     def process_image(self, prompt='', subject_imgs=[], spatial_imgs=[], height=768, width=768, output_path=None, seed=42):
         image = self.pipe(
@@ -33,7 +47,7 @@ class ImageProcessor:
             guidance_scale=3.5,
             num_inference_steps=25,
             max_sequence_length=512,
-            generator=torch.Generator("cpu").manual_seed(seed), 
+            generator=torch.Generator("cpu").manual_seed(seed),
             subject_images=subject_imgs,
             spatial_images=spatial_imgs,
             cond_size=512,
@@ -44,7 +58,7 @@ class ImageProcessor:
         return image
 
 # Initialize the image processor
-base_path = "black-forest-labs/FLUX.1-dev"    
+base_path = "black-forest-labs/FLUX.1-dev"
 lora_base_path = "EasyControl/models"
 style_lora_base_path = "Shakker-Labs"
 processor = ImageProcessor(base_path)
@@ -67,7 +81,7 @@ def single_condition_generate_image(prompt, subject_img, spatial_img, height, wi
     elif control_type == "canny":
         lora_path = os.path.join(lora_base_path, "canny.safetensors")
     set_single_lora(processor.pipe.transformer, lora_path, lora_weights=[1], cond_size=512)
-    
+
     # Set the style LoRA
     if style_lora=="None":
         pass
@@ -160,7 +174,7 @@ with gr.Blocks() as demo:
                 multi_generate_btn = gr.Button("Generate Image")
             with gr.Column():
                 multi_output_image = gr.Image(label="Generated Image")
-                
+
         # Add examples for Multi-Condition Generation
         gr.Examples(
             examples=multi_examples,

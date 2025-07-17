@@ -20,7 +20,7 @@ from diffusers.utils.torch_utils import randn_tensor
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.flux.pipeline_output import FluxPipelineOutput
 from torchvision.transforms.functional import pad
-from transformer_flux import FluxTransformer2DModel
+from .transformer_flux import FluxTransformer2DModel
 
 if is_torch_xla_available():
     import torch_xla.core.xla_model as xm

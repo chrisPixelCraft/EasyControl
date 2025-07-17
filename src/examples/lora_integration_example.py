@@ -39,31 +39,45 @@ def demonstrate_enhanced_lora_integration():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
 
-    # 1. Create mock Bézier data (normally from BezierCurveExtractor)
+    # 1. Create mock Bézier data (matching real format from Chinese calligraphy dataset)
     print("\n1. Creating mock Bézier curve data...")
     bezier_data = {
         'image_path': 'sample_calligraphy.png',
         'characters': [
             {
                 'character_id': 0,
-                'contour_area': 150.0,
-                'bounding_box': (50, 50, 200, 200),
+                'contour_area': 2860.0,
+                'bounding_box': [0, 0, 87, 140],  # List format like real data
                 'bezier_curves': [
-                    [[10, 20], [30, 40], [50, 60], [70, 80]],
-                    [[20, 30], [40, 50], [60, 70], [80, 90]],
-                    [[30, 40], [50, 60], [70, 80], [90, 100]]
+                    # More realistic curves with float precision
+                    [[50.613, 0.016], [54.097, 9.332], [46.213, 16.478], [43.476, 24.656]],
+                    [[45.727, 19.575], [40.057, 37.206], [36.250, 23.027], [34.595, 13.910]],
+                    [[37.581, 18.580], [26.197, 4.267], [24.456, 22.217], [24.857, 29.533]],
+                    [[25.368, 25.387], [25.571, 35.354], [7.811, 30.253], [10.755, 42.860]],
+                    [[10.620, 38.019], [8.410, 45.707], [19.653, 61.118], [23.575, 45.158]],
+                    [[21.823, 50.747], [21.079, 34.813], [39.102, 44.948], [26.838, 51.775]],
+                    [[27.882, 46.657], [34.285, 64.188], [17.184, 55.489], [18.501, 66.791]],
+                    [[20.104, 62.847], [11.835, 71.801], [28.622, 78.215], [15.324, 89.128]],
+                    [[19.095, 84.750], [14.602, 94.514], [-4.319, 88.170], [0.750, 100.822]],
+                    [[-0.913, 96.231], [2.065, 108.177], [16.449, 94.393], [18.960, 90.002]]
                 ],
-                'original_contour_points': 75
+                'original_contour_points': 323
             },
             {
                 'character_id': 1,
-                'contour_area': 120.0,
-                'bounding_box': (250, 50, 150, 180),
+                'contour_area': 1850.0,
+                'bounding_box': [10, 5, 75, 120],  # List format
                 'bezier_curves': [
-                    [[100, 120], [130, 140], [150, 160], [170, 180]],
-                    [[120, 130], [140, 150], [160, 170], [180, 190]]
+                    # Complex character with more curves
+                    [[35.678, 15.234], [42.156, 25.789], [38.947, 35.612], [45.231, 42.089]],
+                    [[42.567, 18.456], [38.923, 28.745], [52.134, 31.267], [48.678, 39.854]],
+                    [[51.234, 22.178], [46.789, 32.456], [58.912, 35.789], [55.467, 44.123]],
+                    [[48.890, 25.678], [52.345, 35.234], [45.678, 45.123], [49.123, 52.789]],
+                    [[46.123, 28.456], [49.567, 38.789], [42.345, 48.567], [45.789, 56.234]],
+                    [[43.456, 31.123], [46.890, 41.456], [39.678, 51.234], [42.123, 58.890]],
+                    [[40.789, 33.567], [44.234, 43.890], [37.012, 53.678], [39.456, 61.234]]
                 ],
-                'original_contour_points': 60
+                'original_contour_points': 156
             }
         ]
     }
@@ -381,6 +395,66 @@ def create_integration_visualization():
 
     print(architecture)
 
+
+def test_real_chinese_calligraphy_data():
+    """
+    Test function using real Chinese calligraphy data format.
+    This demonstrates compatibility with actual dataset output.
+    """
+    print("\n" + "=" * 70)
+    print("TESTING WITH REAL CHINESE CALLIGRAPHY DATA")
+    print("=" * 70)
+    
+    # Real data example (蔘 character with 5 curves for testing)
+    real_bezier_data = {
+        "image_path": "chinese-calligraphy-dataset/chinese-calligraphy-dataset/蔘/92039.jpg",
+        "characters": [
+            {
+                "character_id": 0,
+                "contour_area": 2860.0,
+                "bounding_box": [0, 0, 87, 140],  # List format
+                "bezier_curves": [
+                    # First 5 curves from the real data
+                    [[50.613, 0.016], [54.097, 9.332], [46.213, 16.478], [43.476, 24.656]],
+                    [[45.727, 19.575], [40.057, 37.206], [36.250, 23.027], [34.595, 13.910]],
+                    [[37.581, 18.580], [26.197, 4.267], [24.456, 22.217], [24.857, 29.533]],
+                    [[25.368, 25.387], [25.571, 35.354], [7.811, 30.253], [10.755, 42.860]],
+                    [[10.620, 38.019], [8.410, 45.707], [19.653, 61.118], [23.575, 45.158]]
+                ],
+                "original_contour_points": 323
+            }
+        ]
+    }
+    
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Device: {device}")
+    print(f"Character: 蔘 (complex Chinese character)")
+    print(f"Curves: {len(real_bezier_data['characters'][0]['bezier_curves'])}")
+    print(f"Bounding box: {real_bezier_data['characters'][0]['bounding_box']}")
+    
+    try:
+        # Test BezierParameterProcessor with real data
+        print("\n1. Testing BezierParameterProcessor with real format...")
+        bezier_processor = create_bezier_processor(device=device)
+        density_maps = bezier_processor([real_bezier_data])
+        
+        print(f"✓ Successfully processed real data")
+        print(f"✓ Output shape: {density_maps.shape}")
+        print(f"✓ Density range: [{density_maps.min():.4f}, {density_maps.max():.4f}]")
+        
+        return {
+            "success": True,
+            "density_shape": density_maps.shape,
+            "density_range": (density_maps.min().item(), density_maps.max().item())
+        }
+        
+    except Exception as e:
+        print(f"❌ Error processing real data: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 if __name__ == "__main__":
     print("ENHANCED LORA INTEGRATION EXAMPLE")
     print("=" * 70)
@@ -391,6 +465,9 @@ if __name__ == "__main__":
 
         # Create visualization
         create_integration_visualization()
+
+        # Test with real Chinese calligraphy data format
+        real_data_results = test_real_chinese_calligraphy_data()
 
         print("\nFINAL RESULTS:")
         print(f"  Total BezierAdapter Parameters: {results['total_params']:,}")

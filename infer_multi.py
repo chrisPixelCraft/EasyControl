@@ -1,8 +1,22 @@
+import os
+# Fix for cuDNN Frontend error with CLIP model
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+os.environ["TORCH_CUDNN_SDPA_ENABLED"] = "0"
+os.environ["PYTORCH_DISABLE_CUDNN_SDPA"] = "1"
+
 import torch
 from PIL import Image
-from src.pipeline import FluxPipeline
-from src.transformer_flux import FluxTransformer2DModel
-from src.lora_helper import set_single_lora, set_multi_lora
+from src.core.pipeline import FluxPipeline
+from src.core.transformer_flux import FluxTransformer2DModel
+from src.core.lora_helper import set_single_lora, set_multi_lora
+
+# Optional: Apply attention fallback patch for additional safety
+try:
+    from src.attention_fix import patch_transformers_clip_attention
+    patch_transformers_clip_attention()
+    print("Applied CLIP attention fallback patch")
+except ImportError:
+    print("Attention fallback patch not available, relying on environment variables")
 
 from huggingface_hub import hf_hub_download
 hf_hub_download(repo_id="Xiaojiu-Z/EasyControl", filename="models/canny.safetensors", local_dir="./")
@@ -18,9 +32,9 @@ device = "cuda"
 base_path = "black-forest-labs/FLUX.1-dev"  # Path to your base model
 pipe = FluxPipeline.from_pretrained(base_path, torch_dtype=torch.bfloat16, device=device)
 transformer = FluxTransformer2DModel.from_pretrained(
-    base_path, 
+    base_path,
     subfolder="transformer",
-    torch_dtype=torch.bfloat16, 
+    torch_dtype=torch.bfloat16,
     device=device
 )
 pipe.transformer = transformer

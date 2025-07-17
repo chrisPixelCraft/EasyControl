@@ -17,11 +17,11 @@ from dataclasses import dataclass
 # Import all BezierAdapter components
 from .bezier_parameter_processor import BezierParameterProcessor
 from .spatial_attention_fuser import SpatialAttentionFuser
-from .spatial_transformer_integration import SpatialTransformerIntegrator
+from ..utils.spatial_transformer_integration import SpatialTransformerIntegrator
 from .style_bezier_fusion_module import StyleBezierFusionModule
-from .style_transformer_integration import StyleTransformerIntegrator
+from ..utils.style_transformer_integration import StyleTransformerIntegrator
 from .enhanced_lora_adapters import EnhancedMultiSingleStreamBlockLoraProcessor, EnhancedMultiDoubleStreamBlockLoraProcessor
-from .pipeline import FluxPipeline
+from ..core.pipeline import FluxPipeline
 
 logger = logging.get_logger(__name__)
 

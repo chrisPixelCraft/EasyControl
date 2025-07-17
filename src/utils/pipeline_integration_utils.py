@@ -16,8 +16,8 @@ import json
 import os
 from pathlib import Path
 
-from .bezier_adapter_pipeline import BezierAdapterPipeline, create_bezier_adapter_pipeline
-from .bezier_parameter_processor import BezierParameterProcessor
+from ..bezier.bezier_adapter_pipeline import BezierAdapterPipeline, create_bezier_adapter_pipeline
+from ..bezier.bezier_parameter_processor import BezierParameterProcessor
 from .spatial_transformer_integration import SpatialTransformerIntegrator, validate_spatial_integration
 from .style_transformer_integration import StyleTransformerIntegrator, validate_style_integration
 
