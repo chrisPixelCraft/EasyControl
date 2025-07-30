@@ -1,0 +1,3 @@
+{"source": "../test_imgs/canny.png", "caption": "A sleek modern car parked on a beautiful sandy beach with ocean waves", "target": "../test_imgs/canny.png"}
+{"source": "../test_imgs/depth.png", "caption": "A person walking in a scenic landscape with mountains in the background", "target": "../test_imgs/depth.png"}
+{"source": "../test_imgs/openpose.png", "caption": "A dancer performing graceful movements in an artistic pose", "target": "../test_imgs/openpose.png"}

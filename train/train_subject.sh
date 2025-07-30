@@ -1,6 +1,6 @@
 export MODEL_DIR="black-forest-labs/FLUX.1-dev" # your flux path
 export OUTPUT_DIR="./models/subject_model"  # your save path
-export CONFIG="./default_config.yaml"
+export CONFIG="./single_gpu_config.yaml"
 export TRAIN_DATA="./examples/subject.jsonl"  # your data jsonl file
 export LOG_PATH="$OUTPUT_DIR/log"
 

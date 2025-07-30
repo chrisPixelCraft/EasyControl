@@ -1,0 +1,23 @@
+2025-07-30 18:30:58,644 INFO    MainThread:43418 [wandb_setup.py:_flush():80] Current SDK version is 0.21.0
+2025-07-30 18:30:58,644 INFO    MainThread:43418 [wandb_setup.py:_flush():80] Configure stats pid to 43418
+2025-07-30 18:30:58,644 INFO    MainThread:43418 [wandb_setup.py:_flush():80] Loading settings from /root/.config/wandb/settings
+2025-07-30 18:30:58,644 INFO    MainThread:43418 [wandb_setup.py:_flush():80] Loading settings from /root/context-engineering-intro/EasyControl/train/wandb/settings
+2025-07-30 18:30:58,644 INFO    MainThread:43418 [wandb_setup.py:_flush():80] Loading settings from environment variables
+2025-07-30 18:30:58,645 INFO    MainThread:43418 [wandb_init.py:setup_run_log_directory():703] Logging user logs to /root/context-engineering-intro/EasyControl/train/wandb/run-20250730_183058-qsrbjvfq/logs/debug.log
+2025-07-30 18:30:58,645 INFO    MainThread:43418 [wandb_init.py:setup_run_log_directory():704] Logging internal logs to /root/context-engineering-intro/EasyControl/train/wandb/run-20250730_183058-qsrbjvfq/logs/debug-internal.log
+2025-07-30 18:30:58,645 INFO    MainThread:43418 [wandb_init.py:init():830] calling init triggers
+2025-07-30 18:30:58,645 INFO    MainThread:43418 [wandb_init.py:init():835] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-07-30 18:30:58,645 INFO    MainThread:43418 [wandb_init.py:init():871] starting backend
+2025-07-30 18:30:58,860 INFO    MainThread:43418 [wandb_init.py:init():874] sending inform_init request
+2025-07-30 18:30:58,868 INFO    MainThread:43418 [wandb_init.py:init():882] backend started and connected
+2025-07-30 18:30:58,870 INFO    MainThread:43418 [wandb_init.py:init():953] updated telemetry
+2025-07-30 18:30:58,882 INFO    MainThread:43418 [wandb_init.py:init():977] communicating run to backend with 90.0 second timeout
+2025-07-30 18:30:59,415 INFO    MainThread:43418 [wandb_init.py:init():1029] starting run threads in backend
+2025-07-30 18:30:59,608 INFO    MainThread:43418 [wandb_run.py:_console_start():2458] atexit reg
+2025-07-30 18:30:59,608 INFO    MainThread:43418 [wandb_run.py:_redirect():2306] redirect: wrap_raw
+2025-07-30 18:30:59,608 INFO    MainThread:43418 [wandb_run.py:_redirect():2375] Wrapping output streams.
+2025-07-30 18:30:59,608 INFO    MainThread:43418 [wandb_run.py:_redirect():2398] Redirects installed.
+2025-07-30 18:30:59,612 INFO    MainThread:43418 [wandb_init.py:init():1075] run started, returning control to user process
+2025-07-30 18:30:59,613 INFO    MainThread:43418 [wandb_run.py:_config_callback():1363] config_cb None None {'lora_num': 1, 'cond_size': 512, 'noise_size': 1024, 'test_h': 1024, 'test_w': 1024, 'mode': None, 'train_data_dir': './examples/bezier_clean.jsonl', 'pretrained_model_name_or_path': 'black-forest-labs/FLUX.1-dev', 'pretrained_lora_path': None, 'revision': None, 'variant': None, 'spatial_column': 'bezier_curves', 'subject_column': None, 'target_column': 'target', 'caption_column': 'caption', 'repeats': 1, 'max_sequence_length': 512, 'validation_prompt': 'Traditional Chinese calligraphy character with elegant brushstrokes', 'subject_test_images': ['None'], 'spatial_test_images': ['None'], 'num_validation_images': 1, 'validation_steps': 20, 'ranks': [128], 'network_alphas': [128], 'output_dir': './models/bezier_adapter_model_optimized', 'seed': None, 'train_batch_size': 1, 'num_train_epochs': 50, 'max_train_steps': 1500, 'checkpointing_steps': 20, 'checkpoints_total_limit': None, 'resume_from_checkpoint': None, 'gradient_accumulation_steps': 1, 'gradient_checkpointing': False, 'learning_rate': 0.0001, 'guidance_scale': 1, 'scale_lr': False, 'lr_scheduler': 'constant', 'lr_warmup_steps': 500, 'lr_num_cycles': 1, 'lr_power': 1.0, 'dataloader_num_workers': 8, 'weighting_scheme': 'none', 'logit_mean': 0.0, 'logit_std': 1.0, 'mode_scale': 1.29, 'optimizer': 'AdamW', 'use_8bit_adam': False, 'adam_beta1': 0.9, 'adam_beta2': 0.999, 'prodigy_beta3': None, 'prodigy_decouple': True, 'adam_weight_decay': 0.0001, 'adam_weight_decay_text_encoder': 0.001, 'adam_epsilon': 1e-08, 'prodigy_use_bias_correction': True, 'prodigy_safeguard_warmup': True, 'max_grad_norm': 1.0, 'logging_dir': './models/bezier_adapter_model_optimized/log', 'cache_latents': False, 'report_to': 'wandb', 'mixed_precision': 'bf16', 'upcast_before_saving': False}
+2025-07-30 18:31:04,209 INFO    MsgRouterThr:43418 [mailbox.py:close():129] [no run ID] Closing mailbox, abandoning 1 handles.

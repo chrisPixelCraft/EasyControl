@@ -6,9 +6,9 @@ os.environ["PYTORCH_DISABLE_CUDNN_SDPA"] = "1"
 
 import torch
 from PIL import Image
-from src.core.pipeline import FluxPipeline
-from src.core.transformer_flux import FluxTransformer2DModel
-from src.core.lora_helper import set_single_lora, set_multi_lora
+from src.pipeline import FluxPipeline
+from src.transformer_flux import FluxTransformer2DModel
+from src.lora_helper import set_single_lora, set_multi_lora
 
 # Optional: Apply attention fallback patch for additional safety
 try:

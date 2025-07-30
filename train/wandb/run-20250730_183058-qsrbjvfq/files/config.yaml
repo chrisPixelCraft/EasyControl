@@ -1,0 +1,231 @@
+_wandb:
+    value:
+        cli_version: 0.21.0
+        e:
+            a8zlbsymj1lsgb02mo5dwk90ar30mmmw:
+                args:
+                    - --pretrained_model_name_or_path
+                    - black-forest-labs/FLUX.1-dev
+                    - --cond_size=512
+                    - --noise_size=1024
+                    - --subject_column=None
+                    - --spatial_column=bezier_curves
+                    - --target_column=target
+                    - --caption_column=caption
+                    - --ranks
+                    - "128"
+                    - --network_alphas
+                    - "128"
+                    - --output_dir=./models/bezier_adapter_model_optimized
+                    - --logging_dir=./models/bezier_adapter_model_optimized/log
+                    - --mixed_precision=bf16
+                    - --train_data_dir=./examples/bezier_clean.jsonl
+                    - --learning_rate=1e-4
+                    - --train_batch_size=1
+                    - --validation_prompt
+                    - Traditional Chinese calligraphy character with elegant brushstrokes
+                    - --num_train_epochs=50
+                    - --validation_steps=20
+                    - --checkpointing_steps=20
+                    - --spatial_test_images
+                    - None
+                    - --subject_test_images
+                    - None
+                    - --test_h
+                    - "1024"
+                    - --test_w
+                    - "1024"
+                    - --num_validation_images=1
+                codePath: train/train.py
+                codePathLocal: train.py
+                cpu_count: 208
+                cpu_count_logical: 208
+                cudaVersion: "12.7"
+                disk:
+                    /:
+                        total: "549755813888"
+                        used: "60405080064"
+                email: rafaelhsieh0813@gmail.com
+                executable: /root/miniconda3/envs/easycontrol/bin/python3.10
+                git:
+                    commit: daabdc562954973dc2803661f898adedab7f806e
+                    remote: https://github.com/chrisPixelCraft/EasyControl.git
+                gpu: NVIDIA A100-SXM4-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-SXM4-40GB
+                      uuid: GPU-4f7295e0-b29d-bac0-4cf2-9daf96fb2532
+                host: b65c0db8bd97
+                memory:
+                    total: "912609640448"
+                os: Linux-5.15.0-143-generic-x86_64-with-glibc2.31
+                program: /root/context-engineering-intro/EasyControl/train/train.py
+                python: CPython 3.10.18
+                root: /root/context-engineering-intro/EasyControl/train
+                startedAt: "2025-07-30T18:30:58.641174Z"
+                writerId: a8zlbsymj1lsgb02mo5dwk90ar30mmmw
+        m: []
+        python_version: 3.10.18
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 41
+                - 49
+                - 51
+                - 53
+                - 71
+                - 83
+                - 98
+                - 105
+            "2":
+                - 1
+                - 5
+                - 11
+                - 41
+                - 49
+                - 51
+                - 53
+                - 71
+                - 83
+                - 98
+                - 105
+            "4": 3.10.18
+            "5": 0.21.0
+            "6": 4.49.0
+            "12": 0.21.0
+            "13": linux-x86_64
+adam_beta1:
+    value: 0.9
+adam_beta2:
+    value: 0.999
+adam_epsilon:
+    value: 1e-08
+adam_weight_decay:
+    value: 0.0001
+adam_weight_decay_text_encoder:
+    value: 0.001
+cache_latents:
+    value: false
+caption_column:
+    value: caption
+checkpointing_steps:
+    value: 20
+checkpoints_total_limit:
+    value: null
+cond_size:
+    value: 512
+dataloader_num_workers:
+    value: 8
+gradient_accumulation_steps:
+    value: 1
+gradient_checkpointing:
+    value: false
+guidance_scale:
+    value: 1
+learning_rate:
+    value: 0.0001
+logging_dir:
+    value: ./models/bezier_adapter_model_optimized/log
+logit_mean:
+    value: 0
+logit_std:
+    value: 1
+lora_num:
+    value: 1
+lr_num_cycles:
+    value: 1
+lr_power:
+    value: 1
+lr_scheduler:
+    value: constant
+lr_warmup_steps:
+    value: 500
+max_grad_norm:
+    value: 1
+max_sequence_length:
+    value: 512
+max_train_steps:
+    value: 1500
+mixed_precision:
+    value: bf16
+mode:
+    value: null
+mode_scale:
+    value: 1.29
+network_alphas:
+    value:
+        - 128
+noise_size:
+    value: 1024
+num_train_epochs:
+    value: 50
+num_validation_images:
+    value: 1
+optimizer:
+    value: AdamW
+output_dir:
+    value: ./models/bezier_adapter_model_optimized
+pretrained_lora_path:
+    value: null
+pretrained_model_name_or_path:
+    value: black-forest-labs/FLUX.1-dev
+prodigy_beta3:
+    value: null
+prodigy_decouple:
+    value: true
+prodigy_safeguard_warmup:
+    value: true
+prodigy_use_bias_correction:
+    value: true
+ranks:
+    value:
+        - 128
+repeats:
+    value: 1
+report_to:
+    value: wandb
+resume_from_checkpoint:
+    value: null
+revision:
+    value: null
+scale_lr:
+    value: false
+seed:
+    value: null
+spatial_column:
+    value: bezier_curves
+spatial_test_images:
+    value:
+        - None
+subject_column:
+    value: null
+subject_test_images:
+    value:
+        - None
+target_column:
+    value: target
+test_h:
+    value: 1024
+test_w:
+    value: 1024
+train_batch_size:
+    value: 1
+train_data_dir:
+    value: ./examples/bezier_clean.jsonl
+upcast_before_saving:
+    value: false
+use_8bit_adam:
+    value: false
+validation_prompt:
+    value: Traditional Chinese calligraphy character with elegant brushstrokes
+validation_steps:
+    value: 20
+variant:
+    value: null
+weighting_scheme:
+    value: none

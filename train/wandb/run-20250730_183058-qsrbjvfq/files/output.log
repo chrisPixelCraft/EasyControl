@@ -1,0 +1,84 @@
+07/30/2025 18:30:59 - INFO - __main__ - ***** Running training *****
+07/30/2025 18:30:59 - INFO - __main__ -   Num examples = 30
+07/30/2025 18:30:59 - INFO - __main__ -   Num batches each epoch = 30
+07/30/2025 18:30:59 - INFO - __main__ -   Num Epochs = 50
+07/30/2025 18:30:59 - INFO - __main__ -   Instantaneous batch size per device = 1
+07/30/2025 18:30:59 - INFO - __main__ -   Total train batch size (w. parallel, distributed & accumulation) = 1
+07/30/2025 18:30:59 - INFO - __main__ -   Gradient Accumulation steps = 1
+07/30/2025 18:30:59 - INFO - __main__ -   Total optimization steps = 1500
+Steps:   0%|          | 0/1500 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/root/context-engineering-intro/EasyControl/train/train.py", line 1069, in <module>
+    main(args)
+  File "/root/context-engineering-intro/EasyControl/train/train.py", line 925, in main
+    model_pred = transformer(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/accelerate/utils/operations.py", line 818, in forward
+    return model_forward(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/accelerate/utils/operations.py", line 806, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+    return func(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/transformer_flux.py", line 506, in forward
+    encoder_hidden_states, hidden_states, cond_hidden_states = block(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/transformer_flux.py", line 177, in forward
+    attention_outputs = self.attn(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/diffusers/models/attention_processor.py", line 588, in forward
+    return self.processor(
+  File "/root/context-engineering-intro/EasyControl/train/src/layers.py", line 217, in __call__
+    query = query + self.lora_weights[i] * self.q_loras[i](hidden_states)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/layers.py", line 55, in forward
+    hidden_states = mask * hidden_states
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.00 MiB. GPU 0 has a total capacity of 39.50 GiB of which 3.38 MiB is free. Process 1666330 has 39.48 GiB memory in use. Of the allocated memory 38.88 GiB is allocated by PyTorch, and 108.47 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/root/context-engineering-intro/EasyControl/train/train.py", line 1069, in <module>
+    main(args)
+  File "/root/context-engineering-intro/EasyControl/train/train.py", line 925, in main
+    model_pred = transformer(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/accelerate/utils/operations.py", line 818, in forward
+    return model_forward(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/accelerate/utils/operations.py", line 806, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+    return func(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/transformer_flux.py", line 506, in forward
+    encoder_hidden_states, hidden_states, cond_hidden_states = block(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/transformer_flux.py", line 177, in forward
+    attention_outputs = self.attn(
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/diffusers/models/attention_processor.py", line 588, in forward
+    return self.processor(
+  File "/root/context-engineering-intro/EasyControl/train/src/layers.py", line 217, in __call__
+    query = query + self.lora_weights[i] * self.q_loras[i](hidden_states)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/easycontrol/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/context-engineering-intro/EasyControl/train/src/layers.py", line 55, in forward
+    hidden_states = mask * hidden_states
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.00 MiB. GPU 0 has a total capacity of 39.50 GiB of which 3.38 MiB is free. Process 1666330 has 39.48 GiB memory in use. Of the allocated memory 38.88 GiB is allocated by PyTorch, and 108.47 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
